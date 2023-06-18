@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "966227361155",
+    "project_id": "revolucao3d-df168",
+    "storage_bucket": "revolucao3d-df168.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966227361155:android:fe951684f06ca825560ab6",
+        "android_client_info": {
+          "package_name": "br.com.revolucao3d.revolucao3d_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966227361155-m42rklnb30mptqn52lg8qnuutom0les1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPJUlZGHgQ6hmr2XHXKkwZ3qq7xv89EOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966227361155-m42rklnb30mptqn52lg8qnuutom0les1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
