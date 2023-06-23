@@ -1,39 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:revolucao3d_app/model/student/student.dart';
 
 class CircularPerfilIcon extends StatelessWidget {
   const CircularPerfilIcon({
     super.key,
-    this.imageUrl,
+    required this.student,
     this.onTap,
   });
 
-  final String? imageUrl;
+  final Student student;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    /*return Padding(
-      padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10),
-      child: Container(
-        height: 60,
-        width: 60,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 2,
-            color: Colors.white,
-          ),
-          shape: BoxShape.circle,
-        ),
-        child: const Text(
-          'GN',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );*/
+    final imageUrl =
+        student.imageUrl != null && (student.imageUrl ?? '').isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -42,21 +23,19 @@ class CircularPerfilIcon extends StatelessWidget {
       child: CircleAvatar(
         maxRadius: 60,
         backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-        backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
+        backgroundImage: imageUrl ? NetworkImage(student.imageUrl!) : null,
         child: Material(
           shape: const CircleBorder(),
           clipBehavior: Clip.hardEdge,
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            child: imageUrl == null
-                ? const FractionallySizedBox(
-                    widthFactor: 1,
-                    heightFactor: 1,
+            child: !imageUrl
+                ? SizedBox.expand(
                     child: Center(
                       child: Text(
-                        'GN',
-                        style: TextStyle(
+                        student.fullName.characters.first,
+                        style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

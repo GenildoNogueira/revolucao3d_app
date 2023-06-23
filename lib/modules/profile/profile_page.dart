@@ -1,28 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../model/student/contact.dart';
-import '../../model/student/personal_data.dart';
 import '../../model/student/student.dart';
-import '../home/home_page.dart';
 import 'widgets/card_profile.dart';
 import 'widgets/value_profile.dart';
-
-final student = Student(
-  fullName: "Genildo Nogueira dos Santos",
-  identificationNumber: "20210001",
-  enrollmentDate: DateTime.now(),
-  contact: const Contact(
-    email: "genildonogueira37@gmail.com",
-    phoneNumber: "(99) 99999-9999",
-    address: "São João da Fortaleza",
-  ),
-  personalData: const PersonalData(
-    dateOfBirth: "13/04/2000",
-    gender: "Masculino",
-    nationality: "Brasileiro",
-  ),
-  coursesInProgress: courses,
-);
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({
@@ -126,7 +106,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ValueProfile(
                     label: 'Data de Nascimento',
-                    value: student.personalData.dateOfBirth,
+                    value: dateOfBirth(student.personalData.dateOfBirth),
                   ),
                 ),
                 const SizedBox(width: 15),

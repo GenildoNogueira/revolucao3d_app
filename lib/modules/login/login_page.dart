@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:revolucao3d_app/modules/home/home_page.dart';
 
 import '../../core/repository/authentication_repository.dart';
 import 'recover_password.dart';
@@ -28,14 +27,6 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text,
       );
       _isLoading.value = false;
-
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-      );
     } on LogInWithEmailAndPasswordFailure catch (e) {
       _isLoading.value = false;
       ScaffoldMessenger.of(context).showSnackBar(

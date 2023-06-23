@@ -110,9 +110,7 @@ class AuthenticationRepository {
   /// Throws a [LogOutFailure] if an exception occurs.
   Future<void> logOut() async {
     try {
-      await Future.wait([
-        _firebaseAuth.signOut(),
-      ]);
+      await _firebaseAuth.signOut();
     } catch (_) {
       throw LogOutFailure();
     }
