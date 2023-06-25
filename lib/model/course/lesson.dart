@@ -7,7 +7,7 @@ class Lesson {
   final String videoUrl;
   final String duration;
   final bool? isCompleted;
-  final double? currentPosition;
+  final num? currentPosition;
 
   Lesson({
     required this.id,
@@ -26,7 +26,7 @@ class Lesson {
     String? videoUrl,
     String? duration,
     bool? isCompleted,
-    double? currentPosition,
+    num? currentPosition,
   }) {
     return Lesson(
       id: id ?? this.id,
@@ -62,7 +62,7 @@ class Lesson {
       videoUrl: map['video_url'] as String,
       duration: map['duration'] ?? '',
       isCompleted: map['is_completed'] ?? false,
-      currentPosition: map['currentPosition'] ?? 0,
+      currentPosition: map['currentPosition'] ?? 0.0,
     );
   }
 

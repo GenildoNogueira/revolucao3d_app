@@ -1,5 +1,7 @@
-import '../../model/course.dart';
-import '../../model/lesson.dart';
+import '../../model/course/course.dart';
+import '../../model/course/lesson.dart';
+import '../../model/course/sections.dart';
+import '../service/firebase_path.dart';
 import '../service/firebase_services.dart';
 
 class CourseRepository {
@@ -14,14 +16,27 @@ class CourseRepository {
 
   Stream<List<Course>> getListCourse() {
     return _service.collectionStream(
-      path: 'courses',
+      path: FirebasePath.coursesPath,
       builder: (data) => Course.fromMap(data),
     );
   }
 
-  Stream<List<Lesson>> getLessons(String courseId) {
-    return _service.collectionStream(
-      path: 'courses/$courseId/lessons',
+  Future<List<Sections>> getListSections(String courseId) {
+    return _service.collectionFuture(
+      path: FirebasePath.sectionsListPath(courseId: courseId),
+      builder: (data) => Sections.fromMap(data),
+    );
+  }
+
+  Future<List<Lesson>> getListLessons(
+    String courseId,
+    String sectionId,
+  ) {
+    return _service.collectionFuture(
+      path: FirebasePath.courseLessonPath(
+        courseId: courseId,
+        sectionId: sectionId,
+      ),
       builder: (data) => Lesson.fromMap(data),
     );
   }

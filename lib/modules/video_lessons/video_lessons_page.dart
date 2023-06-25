@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:revolucao3d_app/model/lesson.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../model/course/lesson.dart';
+import 'widget/video_progress_indicator_custom.dart';
 
 class VideoLessonPage extends StatefulWidget {
   const VideoLessonPage({
@@ -20,7 +21,7 @@ class _VideoLessonPageState extends State<VideoLessonPage>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _controller;
   late AnimationController _animationController;
-  bool _showProgress = true;
+  final ValueNotifier<bool> _showProgress = ValueNotifier(true);
   bool _isPlaying = false;
 
   Timer? _progressTimer;
@@ -45,7 +46,7 @@ class _VideoLessonPageState extends State<VideoLessonPage>
       final int duration = _controller.value.duration.inMilliseconds;
       final int position = _controller.value.position.inMilliseconds;
 
-      Timer(const Duration(seconds: 5), () {
+      Timer(const Duration(seconds: 8), () {
         /*setState(() {
           widget.lesson.currentPosition = position / duration;
         });*/
@@ -57,10 +58,10 @@ class _VideoLessonPageState extends State<VideoLessonPage>
   void _startProgressTimer() {
     _cancelProgressTimer();
 
-    Timer(const Duration(seconds: 4), () {
-      setState(() {
-        _showProgress = false;
-      });
+    Timer(const Duration(seconds: 6), () {
+      //setState(() {
+      _showProgress.value = false;
+      //});
     });
   }
 
@@ -83,9 +84,9 @@ class _VideoLessonPageState extends State<VideoLessonPage>
     _animation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
 
     _controller.addListener(() {
-      setState(() {
-        _updatePosition();
-      });
+      //setState(() {
+      _updatePosition();
+      //});
     });
 
     _controller.setLooping(false);
@@ -97,6 +98,8 @@ class _VideoLessonPageState extends State<VideoLessonPage>
 
   @override
   Widget build(BuildContext context) {
+    print('Building...');
+
     return OrientationBuilder(
       builder: (context, orientation) {
         return Scaffold(
@@ -116,30 +119,41 @@ class _VideoLessonPageState extends State<VideoLessonPage>
                       alignment: Alignment.bottomCenter,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () => setState(() {
-                            _showProgress = true;
+                          onTap: () {
+                            _showProgress.value = true;
                             _startProgressTimer();
                             /*if (_showProgress) {
                               _controller.pause();
                             }*/
-                          }),
+                          },
                           onDoubleTap: togglePlayPause,
                           child: VideoPlayer(_controller),
                         ),
-                        VideoProgressIndicatorCustom(
-                          _controller,
-                          animationController: _animationController,
-                          animation: _animation,
-                          showProgress: _showProgress,
-                          togglePlayPause: togglePlayPause,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8,
-                            horizontal: 10,
-                          ),
-                          colors: const VideoProgressColors(
-                            backgroundColor: Colors.white12,
-                            playedColor: Color.fromARGB(255, 194, 182, 169),
-                          ),
+                        AnimatedBuilder(
+                          animation: _showProgress,
+                          builder: (context, child) {
+                            print('building VideoProgressIndicatorCustom...');
+                            return VideoProgressIndicatorCustom(
+                              _controller,
+                              animationController: _animationController,
+                              animation: _animation,
+                              showProgress: _showProgress.value,
+                              togglePlayPause: togglePlayPause,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 10,
+                              ),
+                              colors: const VideoProgressColors(
+                                backgroundColor: Colors.white12,
+                                playedColor: Color.fromARGB(255, 194, 182, 169),
+                              ),
+                              buffered: _controller.value.buffered,
+                              videoCurrentPosition:
+                                  _controller.value.position.inMilliseconds,
+                              videoDuration:
+                                  _controller.value.duration.inMilliseconds,
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -160,188 +174,5 @@ class _VideoLessonPageState extends State<VideoLessonPage>
     _controller.dispose();
     _progressTimer?.cancel();
     super.dispose();
-  }
-}
-
-class VideoProgressIndicatorCustom extends StatelessWidget {
-  const VideoProgressIndicatorCustom(
-    this.controller, {
-    super.key,
-    required this.showProgress,
-    this.togglePlayPause,
-    required this.animationController,
-    required this.animation,
-    this.colors = const VideoProgressColors(),
-    this.padding = const EdgeInsets.only(top: 5.0),
-  });
-
-  final VideoPlayerController controller;
-  final VideoProgressColors colors;
-  final EdgeInsets padding;
-  final bool showProgress;
-  final VoidCallback? togglePlayPause;
-  final AnimationController animationController;
-  final Animation<double> animation;
-
-  String timeVideo(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String hours = twoDigits(duration.inHours);
-    String minutes = twoDigits(duration.inMinutes.remainder(60));
-    String seconds = twoDigits(duration.inSeconds.remainder(60));
-
-    return [
-      if (duration.inHours > 0) hours,
-      minutes,
-      seconds,
-    ].join(':');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const borderRadius = BorderRadius.all(
-      Radius.circular(16),
-    );
-
-    final int duration = controller.value.duration.inMilliseconds;
-    final int position = controller.value.position.inMilliseconds;
-
-    int maxBuffering = 0;
-    for (final DurationRange range in controller.value.buffered) {
-      final int end = range.end.inMilliseconds;
-      if (end > maxBuffering) {
-        maxBuffering = end;
-      }
-    }
-
-    return showProgress
-        ? Padding(
-            padding: padding,
-            child: Container(
-              height: 50,
-              alignment: Alignment.bottomCenter,
-              margin: padding,
-              clipBehavior: Clip.hardEdge,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(144, 100, 90, 81),
-                borderRadius: borderRadius,
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 5,
-                  sigmaY: 5,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      padding: const EdgeInsets.all(0),
-                      color: Colors.white,
-                      iconSize: 30,
-                      onPressed: () {},
-                      icon: const Icon(Icons.skip_previous),
-                    ),
-                    IconButton(
-                      onPressed: togglePlayPause,
-                      padding: const EdgeInsets.all(0),
-                      color: Colors.white,
-                      icon: AnimatedIcon(
-                        icon: AnimatedIcons.play_pause,
-                        progress: animation,
-                        size: 35,
-                      ),
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.all(0),
-                      color: Colors.white,
-                      iconSize: 30,
-                      onPressed: () {},
-                      icon: const Icon(Icons.skip_next),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      timeVideo(controller.value.position),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: Stack(
-                        fit: StackFit.passthrough,
-                        children: <Widget>[
-                          ClipRRect(
-                            borderRadius: borderRadius,
-                            child: SizedBox(
-                              height: 7,
-                              child: LinearProgressIndicator(
-                                value: maxBuffering / duration,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  colors.bufferedColor,
-                                ),
-                                backgroundColor: colors.backgroundColor,
-                              ),
-                            ),
-                          ),
-                          ClipRRect(
-                            borderRadius: borderRadius,
-                            child: SizedBox(
-                              height: 7,
-                              child: VideoScrubber(
-                                controller: controller,
-                                child: LinearProgressIndicator(
-                                  value: position / duration,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    colors.playedColor,
-                                  ),
-                                  backgroundColor: Colors.transparent,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      timeVideo(controller.value.duration),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                  ],
-                ),
-              ),
-            ),
-          )
-        : Stack(
-            fit: StackFit.passthrough,
-            children: <Widget>[
-              SizedBox(
-                height: 7,
-                child: LinearProgressIndicator(
-                  value: maxBuffering / duration,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    colors.bufferedColor,
-                  ),
-                  backgroundColor: colors.backgroundColor,
-                ),
-              ),
-              SizedBox(
-                height: 7,
-                child: VideoScrubber(
-                  controller: controller,
-                  child: LinearProgressIndicator(
-                    value: position / duration,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      colors.playedColor,
-                    ),
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
-              ),
-            ],
-          );
   }
 }

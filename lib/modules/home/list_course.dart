@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:revolucao3d_app/model/course.dart';
-import 'package:revolucao3d_app/model/student/student.dart';
 
 import '../../core/repository/course_repository.dart';
+import '../../model/course/course.dart';
+import '../../model/student/student.dart';
 import 'widgets/card_buttom.dart';
 import 'widgets/course_card.dart';
 
@@ -23,7 +23,7 @@ class ListCourse extends StatelessWidget {
             child: SelectableText(snapshot.error.toString()),
           );
         }
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (!snapshot.hasData) {
           return const Center(
             child: CircularProgressIndicator.adaptive(),
           );
@@ -62,7 +62,7 @@ class ListCourse extends StatelessWidget {
                     progress: course.progress?.toDouble() ?? 0.0,
                     onTap: () {
                       Modular.to.pushNamed(
-                        '/course-lessons',
+                        '/course',
                         arguments: [course, student],
                       );
                     },

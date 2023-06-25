@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
 import 'lesson.dart';
 
 class Course {
@@ -10,7 +8,6 @@ class Course {
   final String name;
   final String description;
   final num? progress;
-  final List<Lesson>? lessons;
 
   const Course({
     required this.id,
@@ -18,7 +15,6 @@ class Course {
     required this.name,
     required this.description,
     this.progress,
-    this.lessons,
   });
 
   Course copyWith({
@@ -35,7 +31,6 @@ class Course {
       name: name ?? this.name,
       description: description ?? this.description,
       progress: progress ?? this.progress,
-      lessons: lessons ?? this.lessons,
     );
   }
 
@@ -46,7 +41,6 @@ class Course {
       'name': name,
       'description': description,
       'progress': progress,
-      'lessons': lessons?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -60,13 +54,6 @@ class Course {
       name: map['name'] as String,
       description: map['description'] as String,
       progress: map['progress'] ?? 0.0,
-      lessons: map['lessons'] != null
-          ? List<Lesson>.from(
-              (map['lessons'] as List<int>).map<Lesson?>(
-                (x) => Lesson.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : null,
     );
   }
 
@@ -77,7 +64,7 @@ class Course {
 
   @override
   String toString() {
-    return 'Course(id: $id,image_url: $imageUrl, name: $name, description: $description, progress: $progress, lessons: $lessons)';
+    return 'Course(id: $id,image_url: $imageUrl, name: $name, description: $description, progress: $progress)';
   }
 
   @override
@@ -88,8 +75,7 @@ class Course {
         other.imageUrl == imageUrl &&
         other.name == name &&
         other.description == description &&
-        other.progress == progress &&
-        listEquals(other.lessons, lessons);
+        other.progress == progress;
   }
 
   @override
@@ -98,7 +84,6 @@ class Course {
         imageUrl.hashCode ^
         name.hashCode ^
         description.hashCode ^
-        progress.hashCode ^
-        lessons.hashCode;
+        progress.hashCode;
   }
 }

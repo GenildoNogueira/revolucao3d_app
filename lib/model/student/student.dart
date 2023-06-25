@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-import '../course.dart';
+import '../course/course.dart';
 import 'contact.dart';
 import 'personal_data.dart';
 
 class Student {
+  final String id;
   final String? imageUrl;
   final String fullName;
   final String identificationNumber;
@@ -17,6 +18,7 @@ class Student {
   final List<Course> coursesInProgress;
 
   const Student({
+    required this.id,
     required this.imageUrl,
     required this.fullName,
     required this.identificationNumber,
@@ -27,6 +29,7 @@ class Student {
   });
 
   Student copyWith({
+    String? id,
     String? imageUrl,
     String? fullName,
     String? identificationNumber,
@@ -36,6 +39,7 @@ class Student {
     List<Course>? coursesInProgress,
   }) {
     return Student(
+      id: id ?? this.id,
       imageUrl: imageUrl ?? this.imageUrl,
       fullName: fullName ?? this.fullName,
       identificationNumber: identificationNumber ?? this.identificationNumber,
@@ -48,6 +52,7 @@ class Student {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'image_url': imageUrl,
       'full_name': fullName,
       'identification_number': identificationNumber,
@@ -63,6 +68,7 @@ class Student {
       throw Exception('There is no data student');
     }
     return Student(
+      id: map['id'] as String,
       imageUrl: map['image_url'] ?? '',
       fullName: map['full_name'] as String,
       identificationNumber: map['identification_number'] as String,
@@ -85,14 +91,15 @@ class Student {
 
   @override
   String toString() {
-    return 'Student(image_url: $imageUrl, full_name: $fullName, identification_number: $identificationNumber, enrollment_date: $enrollmentDate, contact: $contact, personal_data: $personalData, courses_in_progress: $coursesInProgress)';
+    return 'Student(id: $id, image_url: $imageUrl, full_name: $fullName, identification_number: $identificationNumber, enrollment_date: $enrollmentDate, contact: $contact, personal_data: $personalData, courses_in_progress: $coursesInProgress)';
   }
 
   @override
   bool operator ==(covariant Student other) {
     if (identical(this, other)) return true;
 
-    return other.imageUrl == imageUrl &&
+    return other.id == id &&
+        other.imageUrl == imageUrl &&
         other.fullName == fullName &&
         other.identificationNumber == identificationNumber &&
         other.enrollmentDate == enrollmentDate &&
@@ -103,7 +110,8 @@ class Student {
 
   @override
   int get hashCode {
-    return imageUrl.hashCode ^
+    return id.hashCode ^
+        imageUrl.hashCode ^
         fullName.hashCode ^
         identificationNumber.hashCode ^
         enrollmentDate.hashCode ^
@@ -111,6 +119,4 @@ class Student {
         personalData.hashCode ^
         coursesInProgress.hashCode;
   }
-
-  static fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> doc) {}
 }

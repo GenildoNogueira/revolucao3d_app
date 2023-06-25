@@ -13,7 +13,7 @@ class CoreModule extends Module {
           export: true,
         ),
         Bind.singleton(
-          (i) => StudentRepository(),
+          (i) => StudentRepository(courseRepository: i()),
           export: true,
         ),
         Bind.singleton(
