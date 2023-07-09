@@ -1,6 +1,8 @@
+import 'package:asuka/asuka.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -13,11 +15,16 @@ class AppWidget extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: Colors.blue,
         ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+        appBarTheme: AppBarTheme(
+          foregroundColor: Colors.black,
+          titleSpacing: 0,
+          titleTextStyle: GoogleFonts.montserrat(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),
         ),
       ),
       localizationsDelegates: const [
@@ -25,9 +32,8 @@ class AppWidget extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('pt', 'BR'),
-      ],
+      supportedLocales: const [Locale('pt', 'BR')],
+      builder: Asuka.builder,
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
     );

@@ -11,7 +11,7 @@ class FirebasePath {
   static const String coursesPath = 'courses';
   static const String sectionsPath = 'sections';
   static const String lessonsPath = 'lessons';
-  static String sectionsListPath({
+  static String listSectionsPath({
     required String courseId,
   }) =>
       '$coursesPath/$courseId/$sectionsPath/';

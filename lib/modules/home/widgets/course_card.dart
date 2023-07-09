@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
+import '../../../model/course/course.dart';
 
 class CourseCard extends StatelessWidget {
   const CourseCard({
     super.key,
-    required this.title,
-    required this.description,
-    required this.image,
-    required this.progress,
+    required this.course,
     this.onTap,
   });
 
-  final String title;
-  final String description;
-  final double progress;
-  final String image;
+  final Course course;
   final VoidCallback? onTap;
 
   @override
@@ -41,14 +38,14 @@ class CourseCard extends StatelessWidget {
                 Row(
                   children: [
                     Visibility(
-                      visible: image.isNotEmpty,
+                      visible: course.imageUrl.isNotEmpty,
                       child: Container(
                         height: 80,
                         width: 80,
                         clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(image),
+                            image: NetworkImage(course.imageUrl),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -63,16 +60,31 @@ class CourseCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  course.name,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => Modular.to.pushNamed(
+                                  '/course-details',
+                                  arguments: course,
+                                ),
+                                icon: const Icon(Icons.info_outline),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            description,
+                            course.description,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -91,7 +103,7 @@ class CourseCard extends StatelessWidget {
                     text: 'Progresso: ',
                     children: [
                       TextSpan(
-                        text: '${progress * 100}%',
+                        text: '${(course.progress ?? 0.0) * 100}%',
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                         ),
@@ -107,9 +119,11 @@ class CourseCard extends StatelessWidget {
                   child: SizedBox(
                     height: 6,
                     child: LinearProgressIndicator(
-                      value: progress,
-                      semanticsLabel: 'Progresso: ',
-                      semanticsValue: '${progress * 100}%',
+                      value: course.progress?.toDouble() ?? 0.0,
+                      semanticsLabel:
+                          'Progresso: ${(course.progress?.toDouble() ?? 0.0) * 100}%',
+                      semanticsValue:
+                          '${(course.progress?.toDouble() ?? 0.0) * 100}%',
                       valueColor: AlwaysStoppedAnimation<Color>(
                         Theme.of(context).colorScheme.primary,
                       ),

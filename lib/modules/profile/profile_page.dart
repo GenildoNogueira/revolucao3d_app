@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/extencions/extencions.dart';
 import '../../model/student/student.dart';
-import 'widgets/card_profile.dart';
+import 'widgets/profile_avatar.dart';
 import 'widgets/value_profile.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -14,73 +16,67 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borderRadius = BorderRadius.all(
-      Radius.circular(20),
-    );
-
-    String dateOfBirth(DateTime dateTime) {
-      final String day = dateTime.day.toString();
-      final String month = dateTime.month.toString();
-      final String year = dateTime.year.toString();
-      return [
-        day,
-        month,
-        year,
-      ].join('/');
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: InkWell(
-              onTap: () {},
-              borderRadius: borderRadius,
-              child: Container(
-                width: 86,
-                height: 28,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: borderRadius,
-                ),
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.check,
-                      size: 20,
-                      color: Color.fromARGB(255, 97, 132, 199),
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      'FEITO',
-                      style: TextStyle(
-                        height: 1.28,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromARGB(255, 97, 132, 199),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 35,
           ),
-        ],
+        ),
+        title: const Text('Perfil'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CardProfile(
-              student: student,
+            ProfileAvatar(student: student),
+            const SizedBox(height: 20),
+            Text(
+              student.fullName,
+              style: GoogleFonts.montserrat(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Divider(
+              thickness: 2,
+              color: Color.fromRGBO(225, 227, 232, 1),
+            ),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Seus cursos',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            ListView.builder(
+              itemCount: student.coursesInProgress.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Text(
+                  student.coursesInProgress[index].name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    letterSpacing: 0,
+                    height: 1.20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              },
+            ),
+            const Divider(
+              thickness: 2,
+              color: Color.fromRGBO(225, 227, 232, 1),
             ),
             const SizedBox(height: 15),
             Row(
@@ -95,7 +91,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ValueProfile(
                     label: 'Data da Matricula',
-                    value: dateOfBirth(student.enrollmentDate),
+                    value: student.enrollmentDate.dateFormatBR,
                   ),
                 ),
               ],
@@ -106,7 +102,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ValueProfile(
                     label: 'Data de Nascimento',
-                    value: dateOfBirth(student.personalData.dateOfBirth),
+                    value: student.personalData.dateOfBirth.dateFormatBR,
                   ),
                 ),
                 const SizedBox(width: 15),

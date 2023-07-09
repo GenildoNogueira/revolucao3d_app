@@ -1,15 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
 import 'student_lesson.dart';
 
 class StudentSections {
-  final String id;
+  final String? id;
   final List<StudentLesson>? lessons;
 
   StudentSections({
-    required this.id,
+    this.id,
     this.lessons,
   });
 
@@ -36,17 +34,12 @@ class StudentSections {
       throw Exception('There is no student course data');
     }
     return StudentSections(
-      id: map['id'] as String,
+      id: map['id'] ?? '',
       lessons: (map['lessons'] as List<dynamic>?)
           ?.map((lesson) => StudentLesson.fromMap(lesson))
           .toList(),
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory StudentSections.fromJson(String source) =>
-      StudentSections.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

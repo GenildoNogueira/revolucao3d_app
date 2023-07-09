@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:revolucao3d_app/core/extencions/extencions.dart';
+
+import '../../../core/extencions/extencions.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoProgressIndicatorCustom extends StatelessWidget {

@@ -15,10 +15,6 @@ class Sections {
     this.lessons,
   });
 
-  bool areAllLessonsCompleted() {
-    return lessons?.every((lesson) => lesson.isCompleted ?? false) ?? false;
-  }
-
   Sections copyWith({
     String? id,
     String? name,

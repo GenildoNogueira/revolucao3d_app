@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:revolucao3d_app/model/student/student.dart';
+
+import '../../../model/student/student.dart';
 
 class CircularPerfilIcon extends StatelessWidget {
   const CircularPerfilIcon({

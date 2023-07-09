@@ -6,8 +6,6 @@ class Lesson {
   final String description;
   final String videoUrl;
   final String duration;
-  final bool? isCompleted;
-  final num? currentPosition;
 
   Lesson({
     required this.id,
@@ -15,8 +13,6 @@ class Lesson {
     required this.description,
     required this.videoUrl,
     required this.duration,
-    this.isCompleted,
-    this.currentPosition,
   });
 
   Lesson copyWith({
@@ -25,8 +21,6 @@ class Lesson {
     String? description,
     String? videoUrl,
     String? duration,
-    bool? isCompleted,
-    num? currentPosition,
   }) {
     return Lesson(
       id: id ?? this.id,
@@ -34,8 +28,6 @@ class Lesson {
       description: description ?? this.description,
       videoUrl: videoUrl ?? this.videoUrl,
       duration: duration ?? this.duration,
-      isCompleted: isCompleted ?? this.isCompleted,
-      currentPosition: currentPosition ?? this.currentPosition,
     );
   }
 
@@ -46,8 +38,6 @@ class Lesson {
       'description': description,
       'video_url': videoUrl,
       'duration': duration,
-      'is_completed': isCompleted,
-      'currentPosition': currentPosition,
     };
   }
 
@@ -61,8 +51,6 @@ class Lesson {
       description: map['description'] as String,
       videoUrl: map['video_url'] as String,
       duration: map['duration'] ?? '',
-      isCompleted: map['is_completed'] ?? false,
-      currentPosition: map['currentPosition'] ?? 0.0,
     );
   }
 
@@ -73,7 +61,7 @@ class Lesson {
 
   @override
   String toString() {
-    return 'Lesson(id: $id, name: $name, description: $description, duration: $duration, is_completed: $isCompleted, currentPosition: $currentPosition)';
+    return 'Lesson(id: $id, name: $name, description: $description, duration: $duration)';
   }
 
   @override
@@ -83,9 +71,7 @@ class Lesson {
     return other.id == id &&
         other.name == name &&
         other.description == description &&
-        other.duration == duration &&
-        other.isCompleted == isCompleted &&
-        other.currentPosition == currentPosition;
+        other.duration == duration;
   }
 
   @override
@@ -93,8 +79,6 @@ class Lesson {
     return id.hashCode ^
         name.hashCode ^
         description.hashCode ^
-        duration.hashCode ^
-        isCompleted.hashCode ^
-        currentPosition.hashCode;
+        duration.hashCode;
   }
 }

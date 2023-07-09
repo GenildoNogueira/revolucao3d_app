@@ -1,10 +1,10 @@
 # REVOLUÇÃO 3D CURSOS
 
-Feito para cursos de informatica. 
+Feito para cursos de informatica.
 
 ## Começando
 
-A few resources to get you started if this is your first Flutter project:
+Esté projeto está em andamento, é alguns desses recursos ainda não estão prontos.
 
 ## Tela de Login:
 
@@ -26,7 +26,7 @@ A few resources to get you started if this is your first Flutter project:
 
 - Permite que os usuários assistam às aulas em formato de vídeo.
 - Utilize um reprodutor de vídeo para reproduzir os vídeos do curso.
-- Forneça controles de reprodução, como pausar, avançar/retroceder e controle de velocidade.
+- Forneça controles de reprodução, como pausar, avançar/retroceder.
 
 ## Materiais do Curso:
 

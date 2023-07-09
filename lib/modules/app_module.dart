@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'course/details/details_page.dart';
 import 'core/auth_page.dart';
 import 'core/core_module.dart';
 import 'course/home/course_module.dart';
@@ -26,5 +27,9 @@ class AppModule extends Module {
         ModuleRoute('/login', module: LoginModule()),
         ModuleRoute('/profile', module: ProfileModule()),
         ModuleRoute('/course', module: CourseModule()),
+        ChildRoute(
+          '/course-details',
+          child: (context, args) => DetailsPage(course: args.data),
+        ),
       ];
 }

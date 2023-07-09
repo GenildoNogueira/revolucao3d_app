@@ -1,17 +1,35 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../core/repository/student_repository.dart';
+import '../../model/course/course.dart';
 import '../../model/course/lesson.dart';
+import '../../model/student/student.dart';
+import '../../model/student/student_course.dart';
+import '../../model/student/student_lesson.dart';
 import 'widget/video_progress_indicator_custom.dart';
 
 class VideoLessonPage extends StatefulWidget {
   const VideoLessonPage({
     super.key,
+    required this.course,
     required this.lesson,
+    required this.student,
+    required this.studentLesson,
+    required this.studentCourse,
+    required this.sectionId,
+    required this.lessonId,
   });
+  final Student student;
+  final Course course;
   final Lesson lesson;
+  final StudentLesson? studentLesson;
+  final StudentCourse? studentCourse;
+  final String sectionId;
+  final String lessonId;
 
   @override
   State<VideoLessonPage> createState() => _VideoLessonPageState();
@@ -19,9 +37,10 @@ class VideoLessonPage extends StatefulWidget {
 
 class _VideoLessonPageState extends State<VideoLessonPage>
     with SingleTickerProviderStateMixin {
+  final studentRepository = Modular.get<StudentRepository>();
   late VideoPlayerController _controller;
   late AnimationController _animationController;
-  final ValueNotifier<bool> _showProgress = ValueNotifier(true);
+  bool _showProgress = true;
   bool _isPlaying = false;
 
   Timer? _progressTimer;
@@ -42,16 +61,37 @@ class _VideoLessonPageState extends State<VideoLessonPage>
   }
 
   void _updatePosition() {
-    if (_controller.value.isPlaying && _controller.value.isInitialized) {
+    final lesson = widget.studentLesson;
+
+    if (lesson?.isCompleted ?? true) {
       final int duration = _controller.value.duration.inMilliseconds;
       final int position = _controller.value.position.inMilliseconds;
+      final double progress = position / duration;
 
-      Timer(const Duration(seconds: 8), () {
-        /*setState(() {
-          widget.lesson.currentPosition = position / duration;
-        });*/
-        debugPrint('${position / duration}');
-      });
+      if (progress < 1.0) {
+        final updatedLesson = lesson?.copyWith(
+          id: widget.sectionId,
+          isCompleted: true,
+          currentPosition: position.toDouble(),
+        );
+
+        Future.delayed(const Duration(seconds: 6), () async {
+          try {
+            await studentRepository.updateStudentCourse(
+              studentId: widget.student.id,
+              courseId: widget.course.id,
+              sectionId: widget.sectionId,
+              lessonId: widget.lessonId,
+              studentLesson: updatedLesson,
+              studentCourse: widget.studentCourse,
+              progress: progress,
+            );
+          } catch (e) {
+            print('Erro na hora de atualizar o progresso ${e.toString()}');
+            throw e.toString();
+          }
+        });
+      }
     }
   }
 
@@ -59,9 +99,9 @@ class _VideoLessonPageState extends State<VideoLessonPage>
     _cancelProgressTimer();
 
     Timer(const Duration(seconds: 6), () {
-      //setState(() {
-      _showProgress.value = false;
-      //});
+      setState(() {
+        _showProgress = false;
+      });
     });
   }
 
@@ -74,7 +114,7 @@ class _VideoLessonPageState extends State<VideoLessonPage>
   void initState() {
     super.initState();
 
-    _controller = VideoPlayerController.network(widget.lesson.videoUrl);
+    _controller = VideoPlayerController.asset('assets/video/video.mp4');
 
     _animationController = AnimationController(
       vsync: this,
@@ -84,13 +124,23 @@ class _VideoLessonPageState extends State<VideoLessonPage>
     _animation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
 
     _controller.addListener(() {
-      //setState(() {
-      _updatePosition();
-      //});
+      setState(() {
+        _updatePosition();
+      });
     });
 
     _controller.setLooping(false);
-    _controller.initialize().then((_) => setState(() {}));
+
+    _controller.initialize().then((_) {
+      if (widget.studentLesson != null) {
+        if (widget.studentLesson!.currentPosition != null) {
+          final int duration = _controller.value.duration.inMilliseconds;
+          final int position =
+              (duration * widget.studentLesson!.currentPosition!).round();
+          _controller.seekTo(Duration(milliseconds: position));
+        }
+      }
+    });
     _controller.play();
 
     _startProgressTimer();
@@ -98,8 +148,6 @@ class _VideoLessonPageState extends State<VideoLessonPage>
 
   @override
   Widget build(BuildContext context) {
-    print('Building...');
-
     return OrientationBuilder(
       builder: (context, orientation) {
         return Scaffold(
@@ -120,40 +168,33 @@ class _VideoLessonPageState extends State<VideoLessonPage>
                       children: <Widget>[
                         GestureDetector(
                           onTap: () {
-                            _showProgress.value = true;
-                            _startProgressTimer();
-                            /*if (_showProgress) {
-                              _controller.pause();
-                            }*/
+                            setState(() {
+                              _showProgress = true;
+                              _startProgressTimer();
+                            });
                           },
                           onDoubleTap: togglePlayPause,
                           child: VideoPlayer(_controller),
                         ),
-                        AnimatedBuilder(
-                          animation: _showProgress,
-                          builder: (context, child) {
-                            print('building VideoProgressIndicatorCustom...');
-                            return VideoProgressIndicatorCustom(
-                              _controller,
-                              animationController: _animationController,
-                              animation: _animation,
-                              showProgress: _showProgress.value,
-                              togglePlayPause: togglePlayPause,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 10,
-                              ),
-                              colors: const VideoProgressColors(
-                                backgroundColor: Colors.white12,
-                                playedColor: Color.fromARGB(255, 194, 182, 169),
-                              ),
-                              buffered: _controller.value.buffered,
-                              videoCurrentPosition:
-                                  _controller.value.position.inMilliseconds,
-                              videoDuration:
-                                  _controller.value.duration.inMilliseconds,
-                            );
-                          },
+                        VideoProgressIndicatorCustom(
+                          _controller,
+                          animationController: _animationController,
+                          animation: _animation,
+                          showProgress: _showProgress,
+                          togglePlayPause: togglePlayPause,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 10,
+                          ),
+                          colors: const VideoProgressColors(
+                            backgroundColor: Colors.white12,
+                            playedColor: Color.fromARGB(255, 194, 182, 169),
+                          ),
+                          buffered: _controller.value.buffered,
+                          videoCurrentPosition:
+                              _controller.value.position.inMilliseconds,
+                          videoDuration:
+                              _controller.value.duration.inMilliseconds,
                         ),
                       ],
                     ),
@@ -170,7 +211,6 @@ class _VideoLessonPageState extends State<VideoLessonPage>
   @override
   void dispose() {
     _animationController.dispose();
-    _controller.dispose();
     _controller.dispose();
     _progressTimer?.cancel();
     super.dispose();

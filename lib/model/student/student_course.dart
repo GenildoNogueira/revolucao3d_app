@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
 import 'student_sections.dart';
@@ -47,11 +45,6 @@ class StudentCourse {
           .toList(),
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory StudentCourse.fromJson(String source) =>
-      StudentCourse.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

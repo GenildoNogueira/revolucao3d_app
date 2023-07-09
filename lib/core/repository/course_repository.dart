@@ -21,9 +21,9 @@ class CourseRepository {
     );
   }
 
-  Future<List<Sections>> getListSections(String courseId) {
-    return _service.collectionFuture(
-      path: FirebasePath.sectionsListPath(courseId: courseId),
+  Stream<List<Sections>> getListSections(String courseId) {
+    return _service.collectionStream(
+      path: FirebasePath.listSectionsPath(courseId: courseId),
       builder: (data) => Sections.fromMap(data),
     );
   }
